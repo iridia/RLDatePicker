@@ -18,14 +18,12 @@
  */
 
 @import <AppKit/CPControl.j>
-@import "Stepper.j"
+@import "RLStepper.j"
 
-CPLogRegister(CPLogConsole);
-
-@implementation DatePicker : CPControl
+@implementation RLDatePicker : CPControl
 {
     CPView      _theView @accessors;
-    Stepper     _theStepper @accessors;
+    RLStepper     _theStepper @accessors;
     CPArray     segments @accessors;
     id          superController @accessors;
 
@@ -93,7 +91,7 @@ CPLogRegister(CPLogConsole);
         inputManager = self;//[[DatePickerInputManager alloc] init];
         [inputManager setSuperController:self];
 
-        _theStepper = [[Stepper alloc] initWithFrame:CGRectMake(aFrame.size.width -13, 3, 13, 23)];
+        _theStepper = [[RLStepper alloc] initWithFrame:CGRectMake(aFrame.size.width -13, 3, 13, 23)];
         [_theStepper setTarget:self];
         [_theStepper setAction:@selector(stepperAction:)];
 
@@ -800,12 +798,35 @@ CPLogRegister(CPLogConsole);
 {
     self = [super initWithFrame:aFrame];
 
+	var imagePath = function (inName) {
+		
+		return [[CPBundle bundleForClass:[RLDatePicker class]] pathForResource:inName + @".png"];
+	
+	}
+	
+	var image = function (inName, inSize) {
+		
+		if (!inSize)
+		return [[CPImage alloc] initWithContentsOfFile:imagePath(inName)];
+		
+		return [[CPImage alloc] initWithContentsOfFile:imagePath(inName) size:inSize];
+		
+	}
+	
+	var pattern = function (inName, inSize) {
+		
+		return [CPColor colorWithPatternImage:image(inName, inSize)];
+		
+	}
+	
+	
+
     if(self){
         focusedBackground = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
             [
-                [[CPImage alloc] initByReferencingFile:"Resources/DatePicker/date-segment-left.png" size:CGSizeMake(4.0, 18.0)],
-                [[CPImage alloc] initByReferencingFile:"Resources/DatePicker/date-segment-center.png" size:CGSizeMake(1.0, 18.0)],
-                [[CPImage alloc] initByReferencingFile:"Resources/DatePicker/date-segment-right.png" size:CGSizeMake(4.0, 18.0)]
+                image(@"DatePicker/date-segment-left", CGSizeMake(4.0, 18.0)),
+		image(@"DatePicker/date-segment-center", CGSizeMake(1.0, 18.0)),
+		image(@"DatePicker/date-segment-right", CGSizeMake(4.0, 18.0))
             ] isVertical:NO]];
 
         [self setValue:CPRightTextAlignment forThemeAttribute:@"alignment"];
@@ -1160,7 +1181,7 @@ CPLogRegister(CPLogConsole);
 
 @end
 
-@implementation DatePicker (CPCoding)
+@implementation RLDatePicker (CPCoding)
 {
 - (id)initWithCoder:(CPCoder)aCoder
 {
